@@ -399,6 +399,10 @@
       background: rgba(255,255,255,0.02);
       margin-bottom: 12px;
     }
+    .summary-radar {
+      height: 168px;
+      margin-bottom: 8px;
+    }
     .summary-row {
       display: flex;
       gap: 8px;
@@ -416,10 +420,11 @@
 
     .type-code {
       margin: 0;
-      font-size: clamp(30px, 4vw, 42px);
+      font-size: clamp(42px, 9.4vw, 70px);
       color: var(--gold-bright);
       font-family: var(--serif);
-      letter-spacing: 1px;
+      letter-spacing: 0.4px;
+      line-height: 1.03;
     }
 
     .type-name {
@@ -515,7 +520,7 @@
       margin-top: 10px;
       display: flex;
       gap: 8px;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       justify-content: center;
     }
     .share-actions.secondary {
@@ -585,11 +590,13 @@
       .poster-box { grid-template-columns: 1fr; }
       .all-types { grid-template-columns: repeat(2, 1fr); }
       .result-head { margin-bottom: 8px; }
+      .summary-radar { height: 140px; }
     }
 
     .share-actions .btn {
-      font-size: 12px;
-      padding: 8px 12px;
+      font-size: 10px;
+      padding: 7px 9px;
+      white-space: nowrap;
     }
     .restart-wrap {
       margin-top: 8px;
@@ -666,6 +673,9 @@
         <span id="campChip" class="tag-chip">阵营：上岸机器</span>
       </div>
       <div class="result-summary">
+        <div class="summary-radar">
+          <canvas id="radarCanvas" width="520" height="220"></canvas>
+        </div>
         <p id="summaryTagline"></p>
         <div class="summary-row">
           <span class="summary-chip" id="summaryS1">输入维</span>
@@ -706,17 +716,10 @@
         </article>
 
         <article class="panel full-span">
-          <h3>分享卡片（Poster）</h3>
           <div class="poster-box">
             <div class="avatar-card">
+              <p class="tiny">你的备考形象</p>
               <div class="avatar-stage" id="avatarStage"></div>
-              <p class="tiny">你的形象（自动生成）</p>
-            </div>
-            <div class="chart-card">
-              <div class="radar-wrap">
-                <canvas id="radarCanvas" width="520" height="220"></canvas>
-              </div>
-              <p class="tiny">维度图：T/C · A/H · D/F · P/I</p>
             </div>
           </div>
           <div class="share-actions">
@@ -726,10 +729,12 @@
           <div class="restart-wrap">
             <button id="restartBtn" class="ghost-btn">重新测试</button>
           </div>
-          <p class="tiny ad-center">关注公众号：思庐哲学考研｜领取上岸资料【一本通】</p>
+
+
           <div class="qr-wrap">
             <p class="tiny">扫码回复「PETI」测试</p>
             <img src="思庐哲学考研2.0.jpg" alt="思庐哲学二维码" />
+            <p class="tiny ad-center">公众号：思庐哲学考研｜领上岸资料【一本通】</p>
           </div>
         </article>
 
