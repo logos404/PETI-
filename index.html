@@ -87,6 +87,15 @@
       backdrop-filter: blur(4px);
       padding: 28px;
     }
+    #testScreen,
+    #resultScreen {
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      backdrop-filter: none;
+      padding: 0;
+    }
 
     .screen.active { display: block; }
 
@@ -313,10 +322,18 @@
 
     .control-row {
       margin-top: 16px;
+      display: grid;
+      gap: 10px;
+    }
+    .control-note {
+      text-align: center;
+      font-size: 12px;
+      color: var(--parchment-soft);
+    }
+    .control-nav {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
+      justify-content: center;
+      gap: 10px;
       flex-wrap: wrap;
     }
 
@@ -374,6 +391,27 @@
       justify-content: space-between;
       gap: 10px;
       margin-bottom: 12px;
+    }
+    .result-summary {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+      background: rgba(255,255,255,0.02);
+      margin-bottom: 12px;
+    }
+    .summary-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .summary-chip {
+      border: 1px solid rgba(197,171,117,0.35);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 12px;
+      color: var(--parchment-soft);
+      background: rgba(255,255,255,0.02);
     }
 
     .type-code {
@@ -478,6 +516,7 @@
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
+      justify-content: center;
     }
     .share-actions.secondary {
       margin-top: 8px;
@@ -545,6 +584,21 @@
       .result-grid { grid-template-columns: 1fr; }
       .poster-box { grid-template-columns: 1fr; }
       .all-types { grid-template-columns: repeat(2, 1fr); }
+      .result-head { margin-bottom: 8px; }
+    }
+
+    .share-actions .btn {
+      font-size: 12px;
+      padding: 8px 12px;
+    }
+    .restart-wrap {
+      margin-top: 8px;
+      text-align: center;
+    }
+    #restartBtn {
+      font-size: 15px;
+      font-weight: 700;
+      padding: 11px 24px;
     }
   </style>
 </head>
@@ -584,9 +638,11 @@
       </div>
 
       <div class="control-row">
-        <button id="prevBtn" class="ghost-btn">返回上一题</button>
-        <div class="note-right">选择后 1 秒自动下一题</div>
-        <button id="nextBtn" class="ghost-btn">下一题</button>
+        <div class="control-note">选择后 1 秒自动下一题</div>
+        <div class="control-nav">
+          <button id="prevBtn" class="ghost-btn">上一题</button>
+          <button id="nextBtn" class="ghost-btn">下一题</button>
+        </div>
       </div>
       <div id="testError" class="error"></div>
       <p class="test-foot">思庐哲学·10届经验赋能考研</p>
@@ -609,13 +665,17 @@
         </div>
         <span id="campChip" class="tag-chip">阵营：上岸机器</span>
       </div>
+      <div class="result-summary">
+        <p id="summaryTagline"></p>
+        <div class="summary-row">
+          <span class="summary-chip" id="summaryS1">输入维</span>
+          <span class="summary-chip" id="summaryS2">输出维</span>
+          <span class="summary-chip" id="summaryS3">规划维</span>
+          <span class="summary-chip" id="summaryS4">驱动维</span>
+        </div>
+      </div>
 
       <div class="result-grid">
-        <article class="panel full-span">
-          <h3>一句话标签</h3>
-          <p id="typeTagline">无情的原著背诵复读机</p>
-        </article>
-
         <article class="panel full-span">
           <h3>你是这样的考研人</h3>
           <p id="portrait"></p>
@@ -650,7 +710,7 @@
           <div class="poster-box">
             <div class="avatar-card">
               <div class="avatar-stage" id="avatarStage"></div>
-              <p class="tiny">卡通形象（按类型自动生成）</p>
+              <p class="tiny">你的形象（自动生成）</p>
             </div>
             <div class="chart-card">
               <div class="radar-wrap">
@@ -663,13 +723,13 @@
             <button id="downloadWxPosterBtn" class="btn">下载分享图（微信朋友圈比例）</button>
             <button id="downloadXhsPosterBtn" class="btn">下载分享图（小红书比例）</button>
           </div>
-          <div class="share-actions secondary">
+          <div class="restart-wrap">
             <button id="restartBtn" class="ghost-btn">重新测试</button>
           </div>
           <p class="tiny ad-center">关注公众号：思庐哲学考研｜领取上岸资料【一本通】</p>
           <div class="qr-wrap">
             <p class="tiny">扫码回复「PETI」测试</p>
-            <img src="file:///Users/yueyi/.cursor/projects/Users-yueyi-Desktop-peti/assets/______2.0-2e230c4e-e7b8-44a6-8a78-f3d075ae26af.png" alt="思庐哲学二维码" />
+            <img src="思庐哲学考研2.0.jpg" alt="思庐哲学二维码" />
           </div>
         </article>
 
@@ -974,7 +1034,11 @@
       document.getElementById("typeName").textContent = `${type}｜${p.codeZh}`;
       document.getElementById("typeEnFull").textContent = p.en;
       document.getElementById("campChip").textContent = `阵营：${p.camp}`;
-      document.getElementById("typeTagline").textContent = p.tagline;
+      document.getElementById("summaryTagline").textContent = `一句话标签：${p.tagline}`;
+      document.getElementById("summaryS1").textContent = `输入维：${scores.score1 > 0 ? "概念派 C" : "文本派 T"}`;
+      document.getElementById("summaryS2").textContent = `输出维：${scores.score2 > 0 ? "诠释派 H" : "分析派 A"}`;
+      document.getElementById("summaryS3").textContent = `规划维：${scores.score3 > 0 ? "自由派 F" : "决定派 D"}`;
+      document.getElementById("summaryS4").textContent = `驱动维：${scores.score4 > 0 ? "理想派 I" : "功利派 P"}`;
       document.getElementById("portrait").textContent = p.portrait;
       document.getElementById("scene").textContent = p.scene;
       document.getElementById("pain").textContent = p.pain;
