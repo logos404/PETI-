@@ -1,0 +1,1159 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PETI 哲学考研类型测试</title>
+  <style>
+    :root {
+      --obsidian: #0b0b0d;
+      --obsidian-soft: #121317;
+      --parchment: #f1ebdd;
+      --parchment-soft: #d7d0c2;
+      --gold: #9f8451;
+      --gold-bright: #c5ab75;
+      --slate: #5d6f8d;
+      --line: rgba(203, 186, 150, 0.24);
+      --danger: #c87d7d;
+      --radius: 16px;
+      --serif: "Source Han Serif SC", "Noto Serif SC", "Songti SC", "STSong", serif;
+      --sans: "Source Han Sans SC", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background: var(--obsidian);
+      color: var(--parchment);
+      font-family: var(--sans);
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: -10%;
+      pointer-events: none;
+      z-index: -2;
+    }
+
+    body::before {
+      background:
+        radial-gradient(1200px 600px at 10% 20%, rgba(93,111,141,0.12), transparent 60%),
+        radial-gradient(900px 480px at 85% 80%, rgba(159,132,81,0.10), transparent 62%),
+        var(--obsidian);
+      animation: nebulaMove 18s ease-in-out infinite alternate;
+    }
+
+    body::after {
+      background:
+        radial-gradient(2px 2px at 20% 25%, rgba(241,235,221,0.22), transparent 70%),
+        radial-gradient(2px 2px at 72% 41%, rgba(241,235,221,0.18), transparent 70%),
+        radial-gradient(2px 2px at 51% 78%, rgba(241,235,221,0.16), transparent 70%);
+      opacity: 0.45;
+      animation: starsDrift 14s linear infinite;
+      z-index: -1;
+    }
+
+    @keyframes nebulaMove {
+      from { transform: translate3d(0, 0, 0) scale(1); }
+      to { transform: translate3d(1.5%, -1%, 0) scale(1.03); }
+    }
+
+    @keyframes starsDrift {
+      from { transform: translateY(0); }
+      to { transform: translateY(-12px); }
+    }
+
+    .app {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .screen {
+      width: min(980px, 100%);
+      display: none;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      box-shadow: 0 18px 50px rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+      padding: 28px;
+    }
+
+    .screen.active { display: block; }
+
+    .title-cn {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: clamp(30px, 5vw, 52px);
+      letter-spacing: 1px;
+      color: var(--gold-bright);
+      text-align: center;
+    }
+
+    .title-en {
+      margin: 8px 0 24px;
+      text-align: center;
+      color: var(--parchment-soft);
+      letter-spacing: 1.2px;
+      font-size: 14px;
+      text-transform: uppercase;
+    }
+
+    .fade-line {
+      text-align: center;
+      margin: 30px 0 44px;
+      color: var(--parchment);
+      opacity: 0;
+      animation: fadeInText 1.8s ease forwards;
+      font-size: 22px;
+      font-family: var(--serif);
+    }
+
+    @keyframes fadeInText {
+      to { opacity: 1; transform: translateY(-2px); }
+    }
+
+    .center { text-align: center; }
+
+    .btn {
+      border: 1px solid rgba(197,171,117,0.5);
+      color: var(--parchment);
+      background: linear-gradient(180deg, rgba(159,132,81,0.34), rgba(159,132,81,0.22));
+      border-radius: 999px;
+      padding: 11px 22px;
+      cursor: pointer;
+      font-size: 15px;
+      transition: all .25s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
+
+    .landing-foot {
+      margin-top: 90px;
+      text-align: center;
+      color: rgba(241,235,221,0.5);
+      font-size: 12px;
+      letter-spacing: 0.6px;
+    }
+
+    .test-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .progress-text {
+      font-size: 13px;
+      color: var(--parchment-soft);
+      letter-spacing: 0.4px;
+    }
+
+    .progress-track {
+      width: min(360px, 100%);
+      height: 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.02);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--slate), var(--gold-bright));
+      transition: width .35s ease;
+    }
+
+    .moon-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--parchment-soft);
+      font-size: 12px;
+    }
+
+    .moon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid rgba(197,171,117,0.45);
+      background: #1b1f2a;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .moon::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: var(--gold-bright);
+      transform: scaleX(var(--moon, 0.2));
+      transform-origin: left center;
+      transition: transform .35s ease;
+    }
+
+    .question-box {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px;
+      background: rgba(255,255,255,0.015);
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .q-tag {
+      color: var(--gold-bright);
+      font-size: 12px;
+      letter-spacing: 0.6px;
+      margin-bottom: 12px;
+    }
+
+    .question-text {
+      font-size: clamp(19px, 2.8vw, 25px);
+      line-height: 1.56;
+      font-family: var(--serif);
+      margin: 0 0 28px;
+    }
+
+    .breath-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      align-items: center;
+    }
+
+    .bubble-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .bubble-btn {
+      appearance: none;
+      border: 1px solid rgba(197,171,117,0.35);
+      background: rgba(255,255,255,0.015);
+      color: var(--parchment-soft);
+      border-radius: 999px;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .2s ease;
+      animation: breathe 2.4s ease-in-out infinite;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+    }
+
+    .bubble-item:nth-child(1) .bubble-btn { max-width: 72px; animation-delay: .00s; }
+    .bubble-item:nth-child(2) .bubble-btn { max-width: 62px; animation-delay: .15s; }
+    .bubble-item:nth-child(3) .bubble-btn { max-width: 52px; animation-delay: .30s; }
+    .bubble-item:nth-child(4) .bubble-btn { max-width: 62px; animation-delay: .45s; }
+    .bubble-item:nth-child(5) .bubble-btn { max-width: 72px; animation-delay: .60s; }
+
+    .bubble-label {
+      font-size: 12px;
+      color: var(--parchment-soft);
+      text-align: center;
+      line-height: 1.2;
+      min-height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @keyframes breathe {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-1px) scale(1.02); }
+    }
+
+    .bubble-btn:hover {
+      border-color: rgba(197,171,117,0.65);
+      color: var(--parchment);
+      box-shadow: 0 0 0 2px rgba(197,171,117,0.12) inset;
+    }
+
+    .bubble-btn.active {
+      color: var(--parchment);
+      background: linear-gradient(180deg, rgba(159,132,81,0.35), rgba(93,111,141,0.2));
+      border-color: rgba(197,171,117,0.9);
+      box-shadow: 0 0 0 2px rgba(197,171,117,0.16) inset;
+    }
+
+    .bubble-btn.active::after {
+      content: "";
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(241,235,221,0.55);
+      animation: ripple .6s ease;
+    }
+
+    @keyframes ripple {
+      from { transform: scale(0.5); opacity: 0.8; }
+      to { transform: scale(3.2); opacity: 0; }
+    }
+
+    .control-row {
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .ghost-btn {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.02);
+      color: var(--parchment);
+      border-radius: 999px;
+      padding: 9px 16px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .note-right {
+      font-size: 12px;
+      color: var(--parchment-soft);
+    }
+
+    .test-foot {
+      margin-top: 18px;
+      text-align: center;
+      color: rgba(241,235,221,0.55);
+      font-size: 12px;
+      letter-spacing: 0.4px;
+    }
+
+    .loading-center {
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      text-align: center;
+    }
+
+    .loading-title {
+      font-family: var(--serif);
+      font-size: 26px;
+      color: var(--gold-bright);
+      margin: 0;
+    }
+
+    .flash-line {
+      min-height: 28px;
+      color: var(--parchment);
+      font-size: 17px;
+      transition: opacity .25s ease;
+    }
+
+    .result-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .type-code {
+      margin: 0;
+      font-size: clamp(30px, 4vw, 42px);
+      color: var(--gold-bright);
+      font-family: var(--serif);
+      letter-spacing: 1px;
+    }
+
+    .type-name {
+      margin: 4px 0 0;
+      color: var(--parchment);
+      font-size: 15px;
+    }
+
+    .tag-chip {
+      border: 1px solid rgba(197,171,117,0.45);
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 12px;
+      color: var(--parchment-soft);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      background: rgba(255,255,255,0.015);
+    }
+
+    .panel h3 {
+      margin: 0 0 8px;
+      font-size: 15px;
+      color: var(--gold-bright);
+      font-family: var(--serif);
+    }
+
+    .panel p, .panel li {
+      margin: 0;
+      color: var(--parchment);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .panel ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .full-span { grid-column: 1 / -1; }
+
+    .poster-box {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .avatar-card, .chart-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px;
+      background: rgba(255,255,255,0.012);
+    }
+
+    .avatar-stage {
+      height: 220px;
+      border-radius: 10px;
+      border: 1px dashed rgba(197,171,117,0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .avatar-svg {
+      width: 180px;
+      height: 180px;
+    }
+
+    .radar-wrap {
+      height: 220px;
+      position: relative;
+    }
+
+    #radarCanvas {
+      width: 100%;
+      height: 100%;
+    }
+
+    .share-actions {
+      margin-top: 10px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .share-actions.secondary {
+      margin-top: 8px;
+    }
+
+    .ad-center {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .qr-wrap {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .qr-wrap img {
+      width: 160px;
+      height: 160px;
+      border-radius: 10px;
+      border: 1px solid rgba(197,171,117,0.35);
+      object-fit: cover;
+      background: #fff;
+    }
+
+    .tiny {
+      font-size: 12px;
+      color: var(--parchment-soft);
+      margin-top: 6px;
+    }
+
+    .all-types {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .type-pill {
+      border: 1px solid rgba(197,171,117,0.2);
+      border-radius: 999px;
+      text-align: center;
+      padding: 6px 8px;
+      color: var(--parchment-soft);
+      font-size: 12px;
+      background: rgba(255,255,255,0.01);
+    }
+
+    .type-pill.current {
+      color: var(--parchment);
+      border-color: rgba(197,171,117,0.58);
+      background: rgba(159,132,81,0.2);
+    }
+
+    .error {
+      margin-top: 8px;
+      color: var(--danger);
+      font-size: 13px;
+      min-height: 18px;
+    }
+
+    @media (max-width: 860px) {
+      .screen { padding: 20px; }
+      .result-grid { grid-template-columns: 1fr; }
+      .poster-box { grid-template-columns: 1fr; }
+      .all-types { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <section id="landingScreen" class="screen active">
+      <h1 class="title-cn">哲学考研类型测试</h1>
+      <p class="title-en">Philosophy Entrance-Exam Type Indicator</p>
+      <p class="fade-line">PETI，揭示你的考研底色。</p>
+      <div class="center">
+        <button id="startBtn" class="btn">认识你自己</button>
+      </div>
+      <p class="landing-foot">@思庐哲学考研原创发布</p>
+    </section>
+
+    <section id="testScreen" class="screen">
+      <div class="test-header">
+        <div>
+          <div id="progressText" class="progress-text">1 / 32</div>
+          <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div>
+        </div>
+        <div class="moon-wrap">
+          <div id="moon" class="moon"></div>
+          <span id="moonText">新月</span>
+        </div>
+      </div>
+
+      <div class="question-box">
+        <div>
+          <div id="qTag" class="q-tag">输入维</div>
+          <p id="questionText" class="question-text"></p>
+        </div>
+
+        <div>
+          <div id="bubbleRow" class="breath-row"></div>
+        </div>
+      </div>
+
+      <div class="control-row">
+        <button id="prevBtn" class="ghost-btn">返回上一题</button>
+        <div class="note-right">选择后 1 秒自动下一题</div>
+        <button id="nextBtn" class="ghost-btn">下一题</button>
+      </div>
+      <div id="testError" class="error"></div>
+      <p class="test-foot">思庐哲学·10届经验赋能考研</p>
+    </section>
+
+    <section id="loadingScreen" class="screen">
+      <div class="loading-center">
+        <p class="loading-title">正在解析你的备考底色...</p>
+        <div id="flashLine" class="flash-line">TADP｜无情的原著背诵复读机</div>
+        <p class="tiny">请稍候，PETI 正在重构你的思维地图</p>
+      </div>
+    </section>
+
+    <section id="resultScreen" class="screen">
+      <div class="result-head">
+        <div>
+          <h2 id="typeCode" class="type-code">中世纪经院学者</h2>
+          <p id="typeName" class="type-name">TADP｜文本-分析-决定-功利</p>
+          <p id="typeEnFull" class="type-name">Textual Analytic Determinism Pragmatism</p>
+        </div>
+        <span id="campChip" class="tag-chip">阵营：上岸机器</span>
+      </div>
+
+      <div class="result-grid">
+        <article class="panel full-span">
+          <h3>一句话标签</h3>
+          <p id="typeTagline">无情的原著背诵复读机</p>
+        </article>
+
+        <article class="panel full-span">
+          <h3>你是这样的考研人</h3>
+          <p id="portrait"></p>
+        </article>
+
+        <article class="panel">
+          <h3>你的考研天赋</h3>
+          <ul id="talents"></ul>
+        </article>
+        <article class="panel">
+          <h3>你的隐秘代价</h3>
+          <ul id="costs"></ul>
+        </article>
+
+        <article class="panel full-span">
+          <h3>你在现实中的样子</h3>
+          <p id="scene"></p>
+        </article>
+
+        <article class="panel full-span">
+          <h3>一句刺痛你的话</h3>
+          <p id="pain"></p>
+        </article>
+
+        <article class="panel full-span">
+          <h3>备考建议</h3>
+          <ul id="advice"></ul>
+        </article>
+
+        <article class="panel full-span">
+          <h3>分享卡片（Poster）</h3>
+          <div class="poster-box">
+            <div class="avatar-card">
+              <div class="avatar-stage" id="avatarStage"></div>
+              <p class="tiny">卡通形象（按类型自动生成）</p>
+            </div>
+            <div class="chart-card">
+              <div class="radar-wrap">
+                <canvas id="radarCanvas" width="520" height="220"></canvas>
+              </div>
+              <p class="tiny">维度图：T/C · A/H · D/F · P/I</p>
+            </div>
+          </div>
+          <div class="share-actions">
+            <button id="downloadWxPosterBtn" class="btn">下载分享图（微信朋友圈比例）</button>
+            <button id="downloadXhsPosterBtn" class="btn">下载分享图（小红书比例）</button>
+          </div>
+          <div class="share-actions secondary">
+            <button id="restartBtn" class="ghost-btn">重新测试</button>
+          </div>
+          <p class="tiny ad-center">关注公众号：思庐哲学考研｜领取上岸资料【一本通】</p>
+          <div class="qr-wrap">
+            <p class="tiny">扫码回复「PETI」测试</p>
+            <img src="file:///Users/yueyi/.cursor/projects/Users-yueyi-Desktop-peti/assets/______2.0-2e230c4e-e7b8-44a6-8a78-f3d075ae26af.png" alt="思庐哲学二维码" />
+          </div>
+        </article>
+
+        <article class="panel full-span">
+          <h3>全部人格速览</h3>
+          <div id="allTypeGrid" class="all-types"></div>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const questions = [
+      { id: 1, dim: "输入维", text: "比起听老师在B站上天花乱坠地串讲“大框架”，我更觉得用三色荧光笔把教材里的名词解释逐字划出来才让人心里踏实。" },
+      { id: 2, dim: "输入维", text: "面对一个极其复杂的哲学理论，我习惯先找个通俗的隐喻或网络梗来把握它的“核心精神”，而不是死磕它拗口的原典表述。" },
+      { id: 3, dim: "输入维", text: "我的复习资料上总是写满了密密麻麻的批注，我觉得脱离了具体的文本语境去谈哲学思辨，纯属空中楼阁。" },
+      { id: 4, dim: "输入维", text: "我看书喜欢先画出整本书的思维导图（搭骨架），只要逻辑理顺了，我觉得里面具体的年份、人名或细碎定义（填血肉）都可以考前再突击。" },
+      { id: 5, dim: "输入维", text: "复习时，比起去理解哲学家为什么这么想，我更关心这段话在考试中对应的具体“踩分词”到底是哪几个。" },
+      { id: 6, dim: "输入维", text: "如果让我主编一本哲学考研教材，我会大幅削减那些枯燥的生平和冗长的引述，直接用纯粹的逻辑推演和流派对比图谱来呈现。" },
+      { id: 7, dim: "输入维", text: "就算我完全理解了康德的“先验综合判断”，如果在默写时不能一字不差地还原教材上的标准表述，我依然会非常焦虑。" },
+      { id: 8, dim: "输入维", text: "相比于机械记忆各种流派的具体定义，我更擅长在脑海里进行“沙盘推演”，比如想象经验论和唯理论面对同一个问题会怎么互怼。" },
+      { id: 9, dim: "输出维", text: "答论述题时，我不仅要写“第一、第二、第三”，还恨不得在每个要点前加上小标题，主打一个让阅卷老师“无脑给分”。" },
+      { id: 10, dim: "输出维", text: "我认为一份绝佳的哲学答卷不该像干瘪的产品说明书，而应该像一篇思想随笔，能看出答题者在思维深处的挣扎与灵光乍现。" },
+      { id: 11, dim: "输出维", text: "“废话文学”在考研里没用。如果一道大题我只知道两个得分点，我宁愿只写两行，也不想用一堆哲学黑话去“注水”。" },
+      { id: 12, dim: "输出维", text: "遇到实在不会的开放性题目，我非常擅长用“主体间性”、“此在”等高级词汇进行“降维打击”，把不同的理论像“缝合怪”一样丝滑地圆回来。" },
+      { id: 13, dim: "输出维", text: "我极其反感那种把极其复杂的辩证法用一通天马行空的散文式语言糊弄过去的答卷，学术就该有一说一，不能故弄玄虚。" },
+      { id: 14, dim: "输出维", text: "在答卷上，与其像个没有感情的 AI 模型一样堆砌踩分点，我更希望我的论述能有一气呵成的理论张力和优美的文风。" },
+      { id: 15, dim: "输出维", text: "比起那些思想天马行空但答题毫无章法的“民间哲学家”，我更愿意做一个严格遵守应试学术规范的“做题家”。" },
+      { id: 16, dim: "输出维", text: "我有时候受不了标准答案里把深邃的哲学思想简化成三条干巴巴的“历史意义”，我觉得这简直是对哲学的亵渎。" },
+      { id: 17, dim: "规划维", text: "我的备考计划精确到了每天的特定小时甚至分钟。如果某天因为突发事件被打乱了进度，我会产生极强的负罪感。" },
+      { id: 18, dim: "规划维", text: "所谓的“复习计划”对我来说只是个心理安慰。我今天学10个小时还是去打一天游戏，完全取决于我早晨醒来时的精神状态。" },
+      { id: 19, dim: "规划维", text: "不管今天有没有“学习的灵感”，只要到了定好的背书时间，我都会像个尽职的 NPC 一样准时开始机械式的重复。" },
+      { id: 20, dim: "规划维", text: "我的复习状态就像“薛定谔的猫”，在翻开书之前，连我自己都不知道今天是“文思泉涌”还是“大脑直接当机”。" },
+      { id: 21, dim: "规划维", text: "我相信考研就像一条精密的流水线，只要保证每天的“输入量”达标，最终的“上岸”就是个水到渠成的决定论事件。" },
+      { id: 22, dim: "规划维", text: "我觉得备考极度依赖“心流（Flow）”。状态不好的时候强行坐在书桌前纯属精神内耗，不如直接出门 Citywalk。" },
+      { id: 23, dim: "规划维", text: "在备考期，我有着极其可怕的“抗干扰能力”，哪怕宿舍里其他人在狂欢，我也能戴上耳机把今天的 50 个名词解释过完。" },
+      { id: 24, dim: "规划维", text: "复习时，如果遇到一个特别戳中我的概念，我会毫无顾忌地顺藤摸瓜研究下去，哪怕这会严重拖慢我今天的整体复习进度。" },
+      { id: 25, dim: "驱动维", text: "说白了，考研对我而言就是一张逃离现实社会“斩杀线”的门票，只要能考上，我不在乎它是不是应试八股。" },
+      { id: 26, dim: "驱动维", text: "哪怕当下的考研制度有种种荒诞之处，我依然把这次备考视为一次自我重塑的精神苦旅，我是为了追求“真正的智慧”而来的。" },
+      { id: 27, dim: "驱动维", text: "“考点之外，皆是废话。”如果某位哲学家的思想极其深刻但大纲绝对不考，我绝对不会在他身上多浪费一秒钟的时间。" },
+      { id: 28, dim: "驱动维", text: "如果在教材里看到一句粗暴或者“学术裁缝”式拼凑出来的低劣翻译，我会感到强烈的生理不适，并在心里疯狂吐槽编者的学术素养。" },
+      { id: 29, dim: "驱动维", text: "如果有一种合法的“脑机接口”能让我瞬间记住所有真题答案保送上岸，但代价是我会失去独立的哲学思辨力，我会毫不犹豫地选择插管。" },
+      { id: 30, dim: "驱动维", text: "我时常在深夜陷入存在主义危机，拷问自己“这种机械的闭卷考试真的能选拔出优秀的哲学家吗？”，从而导致严重的精神内耗。" },
+      { id: 31, dim: "驱动维", text: "对于目标院校，我更像是一个“数据分析师”，我最关心的是历年考点分布、报录比、出题规律和导师手里的项目方向。" },
+      { id: 32, dim: "驱动维", text: "相比于在初试里拿到一个世俗的高分，我内心深处更渴望的，是在复试的考场上能与博导进行一场真正意义上、灵魂契合的学术对话。" }
+    ];
+
+    const likertLabels = ["极不认同", "不太认同", "中立", "比较认同", "极其认同"];
+
+    const profiles = {
+      TADP: { nameCn: "中世纪经院学者", codeZh: "文本-分析-决定-功利", en: "Textual Analytic Determinism Pragmatism", camp: "上岸机器", tagline: "无情的原著背诵复读机", portrait: "文本的质料加上分析的逻辑，在决定论的纪律与功利的目标下疯狂运转。你是为了上岸能把教材生吞活剥的狠人，哲学家在你眼里不是先哲，而是由“名词解释”组成的提分NPC。只要背不死，就往死里背。", talents: ["踩分极其精准，阅卷人狂喜。", "抗焦虑能力极强，像钟表一样稳定。", "基础知识扎实，名词解释永不翻车。"], costs: ["缺乏学术灵气，答题像AI生成的。", "遇到开放性超纲题，大脑瞬间当机。", "初试高分，复试容易被导师嫌弃死板。"], scene: "清晨6点的楼道里，你拿着画满三色荧光笔、已经被翻烂的《西哲史》，像念咒语一样疯狂重复“实体即主体”。", pain: "“你背得很熟练，但你真的懂康德在说什么吗？”", advice: ["留出10%的时间去看看原典的导读或序言。", "答卷时在踩分点之外，试着加一两句你自己的理解。", "给你的卷子注入一点“人味”。"] },
+      CADP: { nameCn: "康德式建构师", codeZh: "概念-分析-决定-功利", en: "Conceptual Analytic Determinism Pragmatism", camp: "上岸机器", tagline: "行走的考点思维导图", portrait: "概念的宏观把控与分析的条理性，配合着极强的规划与得分渴望。你是考研界的架构师，热衷于把庞杂的哲学史拆解成极其规整的考点模块。你不爱看废话，只喜欢提炼“核心骨架”。", talents: ["大论述题视野宏观，条理极其清晰。", "复习效率极高，从不把时间浪费在非考点上。", "擅长跨章节串联，能把不同哲学家拉清单对比。"], costs: ["骨架极大，但血肉（文本细节）不足。", "遇到抠字眼的偏门小题容易丢分。", "过度依赖自己画的图，脱离框架就不会说话。"], scene: "坐在iPad前，熟练地用Xmind拖拽着成百上千个知识节点，看着完美的树状图产生一种“我已经全掌握了”的幻觉。", pain: "“你的框架很漂亮，但论据空洞得像一句口号。”", advice: ["框架建好后，必须强迫自己回归教材。", "把具体的文本例子和关键引语填补到你的导图里。", "答题不能只有骨头没有肉。"] },
+      THDP: { nameCn: "考研经验论者", codeZh: "文本-诠释-决定-功利", en: "Textual Hermeneutic Determinism Pragmatism", camp: "上岸机器", tagline: "历年真题套路拆解大师", portrait: "扎根文本又擅长诠释延展，加上严格的执行力和唯分数论。你是彻头彻尾的“经验论者”，你的复习圣经不是教材，而是历年真题。你能在旧题目的灰烬里，敏锐地嗅出今年出题的火星。", talents: ["极其擅长总结答题模板和套话。", "能把有限的知识储备发挥出120%的分数。", "对出题人的偏好有着野兽般的直觉。"], costs: ["极度害怕题型突变或反套路出题。", "知识结构呈碎片状，只围绕真题建构。", "一旦真题没押中，考场上极易心态崩溃。"], scene: "面前铺着近十年的真题卷，拿着红笔在上面圈圈画画，试图用统计学规律破解出题老师的心理密码。", pain: "“今年换出题人了，题型全变了。”", advice: ["真题是用来检验的，不是用来构建知识体系的。", "在考前两个月，必须跳出真题库。", "老老实实把大纲要求的基础知识地毯式扫一遍。"] },
+      CHDP: { nameCn: "黑格尔式辩证大师", codeZh: "概念-诠释-决定-功利", en: "Conceptual Hermeneutic Determinism Pragmatism", camp: "上岸机器", tagline: "考场上的满分缝合巨匠", portrait: "偏好概念升华与自由诠释，但在行动上受纪律和分数的绝对统御。你能把任何生僻考点都用一套宏大的话语体系圆回来，答题气势磅礴。你不是在考试，你是在考场上表演“辩证法”。", talents: ["语言极具哲学张力，能迅速镇住阅卷人。", "极具学术变通能力，什么题都能写满。", "擅长拔高立意，让平庸的答案显得高级。"], costs: ["容易假大空，废话连篇抓不住核心。", "基础概念往往经不起推敲。", "容易被阅卷老师一眼看穿“只会背套话”。"], scene: "在模拟考试时奋笔疾书，用“主体间性”、“此在”等高级词汇疯狂填充试卷空白，虽然自己也不知道写了啥，但字迹极其自信。", pain: "“写了整整两页纸，硬是没踩中一个得分点。”", advice: ["戒掉“过度升华”的瘾。", "遇到基础题，先老老实实把“是什么”用最朴素准确的语言写出来。", "再用你的高级词汇去写“为什么”和“怎么样”。"] },
+      TADI: { nameCn: "文本考据狂", codeZh: "文本-分析-决定-理想", en: "Textual Analytic Determinism Idealism", camp: "学术苦行僧", tagline: "抠字眼的硬核考据狂", portrait: "对文本与逻辑有着原教旨主义般的执着，极度自律且只为真理低头。你无法忍受教材上的逻辑断层或糟糕翻译，你不是在备考，你是在替出版社做教材的校对与勘误工作。", talents: ["学术态度极其严谨，对细节的掌握无人能及。", "一旦理解就永远不会忘，无需机械背诵。", "进入复试后，绝对是导师眼里的学术好苗子。"], costs: ["极容易在非考点上浪费大量时间。", "复习进度极其缓慢，经常完不成计划。", "答题时容易陷入对教材观点的批判，偏离标准答案。"], scene: "为了弄懂教材上一句奇怪的表述，翻找了三本外文原著，并在笔记本上写下了一篇500字的考证小论文，此时距离考研还有100天。", pain: "“你研究得很透彻，但这题今年不考。”", advice: ["设立“学术止损点”。", "遇到教材上的硬伤，在旁边打个问号，忍住恶心先背下来。", "考研是一场妥协的艺术，考上之后你有大把时间去批判它。"] },
+      CADI: { nameCn: "理性主义推演者", codeZh: "概念-分析-决定-理想", en: "Conceptual Analytic Determinism Idealism", camp: "学术苦行僧", tagline: "追求逻辑闭环的强迫症", portrait: "执迷于概念的推演与逻辑的自洽，自律而纯粹。你不仅要知道哲学家说了什么，更要推导出他为什么这么说。如果不把一个理论的内在逻辑盘出闭环，你绝对拒绝进入下一章。", talents: ["理解极其深刻，能轻松应对复杂的论述题。", "具备真正的批判性思维，答题逻辑严密。", "能看透不同哲学流派之间深层的继承与对立。"], costs: ["会在康德的先验演绎等难点上卡住几个星期。", "容易眼高手低，懂了但写不出来。", "过于理性，面对需要死记硬背的条目极其痛苦。"], scene: "盯着黑格尔的《逻辑学》发呆一整天，脑子里像是有两支军队在交战，直到把某个概念的辩证推演完全想通，才长舒一口气。", pain: "“理顺了整个哲学史的脉络，但忘了背第一章的名词解释。”", advice: ["接受哲学史上的某些理论本身就是有缝隙的。", "不要试图在备考期间解决连哲学家自己都没解决的逻辑漏洞。", "懂得“适可而止”是你的必修课。"] },
+      THDI: { nameCn: "古典语文学家", codeZh: "文本-诠释-决定-理想", en: "Textual Hermeneutic Determinism Idealism", camp: "学术苦行僧", tagline: "跨越时空的古典语文学家", portrait: "沉醉于文本细节的诗意诠释，用苦修般的纪律追求学术理想。你把考研当成一次与先哲深度对话的旅程，你的笔记不像是备考资料，更像是一本充满洞见的学术随笔集。", talents: ["语感极佳，行文自带浑然天成的学术美感。", "对哲学的原初语境有着极强的共情能力。", "答卷往往能给疲惫的阅卷老师带来惊喜。"], costs: ["极度缺乏“得分点”意识，容易洋洋洒洒不知所云。", "抗拒把优美的思想肢解成“第一第二第三”。", "过度沉浸在自己喜欢的流派，偏科严重。"], scene: "在图书馆的窗边，一边读着海德格尔，一边在空白处写下大段充满灵气的感悟，内心充满了丰盈的喜悦，完全忘了这是一场应试。", pain: "“写得真美，但请问这道题的三个得分要点在哪？”", advice: ["你需要进行残忍的“降维打击”训练。", "强迫自己把长篇大论压缩成带有序号的短句。", "把诗意留在心里，把得分点明明白白地写在卷面上。"] },
+      CHDI: { nameCn: "纯粹理论老干部", codeZh: "概念-诠释-决定-理想", en: "Conceptual Hermeneutic Determinism Idealism", camp: "学术苦行僧", tagline: "没有博导命，得了博导病", portrait: "站在概念的云端挥洒思想，自律且胸怀大志。你根本没把初试放在眼里，你是按考博的规格来要求自己的。你热衷于构建宏大的哲学史谱系，视通俗教材为草芥。", talents: ["思想维度极高，理论视野远超同期考生。", "论述题写起来高屋建瓴，气势碾压。", "一旦进入面试，几乎可以直接征服导师。"], costs: ["完全脱离群众，答题过于深奥导致阅卷人看不懂。", "极其容易在英语和政治上翻车，导致连复试线都摸不到。", "自视甚高，容易在考场上翻车于最基础的送分题。"], scene: "在考研群里和人激烈辩论拉康的精神分析对马克思主义的补充，引经据典大杀四方，而你的政治肖四还连包装都没拆。", pain: "“你建构的哲学体系很宏大，但你政治过线了吗？”", advice: ["认清现实，初试是一场极其世俗的“门槛测试”。", "把你过剩的学术精力分一半给公共课。", "别让你的满腹才华死在英语阅读和政治大题上。"] },
+      TAFP: { nameCn: "智者学派/诡辩家", codeZh: "文本-分析-自由-功利", en: "Textual Analytic Free Pragmatism", camp: "玄学突击手", tagline: "考前一月的奇迹召唤师", portrait: "偏好具体的文本记忆和实用的分析，但在行动上随心所欲且极度功利。前期你是岁月静好的氛围组，考前一个月你化身为没有感情的背书机器。你坚信凭借自己的短期记忆力和解题技巧能创造奇迹。", talents: ["短时爆发力极其恐怖，冲刺期效率惊人。", "擅长寻找捷径，总能搞到“内部精简版资料”。", "心理素质极佳（死猪不怕开水烫），敢于断尾求生。"], costs: ["知识极度不牢固，考完出考场瞬间忘光。", "如果考题稍微偏离常规，会直接交白卷。", "考前极度痛苦，处于猝死的边缘。"], scene: "距离考试还有20天，你终于放下了手机，喝下第三罐红牛，对着从闲鱼买来的《哲学考研终极背诵版》开始疯狂输出。", pain: "“你以为你在冲刺，其实你才刚开始预习。”", advice: ["哲学考研的体量不支持纯粹的短期突击。", "至少提前三个月梳理出一个粗糙的框架，把厚书变薄。", "否则你考前连那份“精简版资料”都背不完。"] },
+      CAFP: { nameCn: "实用主义天才", codeZh: "概念-分析-自由-功利", en: "Conceptual Analytic Free Pragmatism", camp: "玄学突击手", tagline: "四两拨千斤的投机分子", portrait: "凭借对概念的敏锐抓取和精明的分析，你在考研路上走位极其风骚。你极度厌恶枯燥的死记硬背，总想用最小的投入换取刚好过线的分数。你是个实用主义的天才，也是个危险的赌徒。", talents: ["学习极其讨巧，能迅速摸清一门课的得分规律。", "擅长“用已知推未知”，哪怕没复习到也能编得像模像样。", "精力分配极其精准，坚决不学边角料。"], costs: ["聪明反被聪明误，经常败在需要下死功夫的地方。", "缺乏底层知识的支撑，遇到真学者阅卷必死。", "长期处于“懂了但没完全懂”的半吊子状态。"], scene: "翻开书看了两眼目录和核心概念，脑子里过了一遍逻辑觉得“嗯，我懂了”，然后合上书心安理得地去打游戏了。", pain: "“这题你确实能编两句，但专有名词你一个都拼不出来。”", advice: ["哲学考试有很多东西是无法靠逻辑推理“编”出来的。", "收起你的小聪明。", "该下的笨功夫一步都不能省。"] },
+      THFP: { nameCn: "占卜式押题家", codeZh: "文本-诠释-自由-功利", en: "Textual Hermeneutic Free Pragmatism", camp: "玄学突击手", tagline: "痴迷内幕的玄学押题家", portrait: "游走在文本的边缘，靠着天马行空的诠释和功利的投机心理备考。你不相信天道酬勤，你只相信信息差。你把大部分精力用来研究目标院校导师的近期论文和各种群里的小道消息。", talents: ["情报收集能力一流，各路复习群里的百晓生。", "思路开阔，善于将时事热点与哲学考点强行关联。", "运气好的时候，真的能精准命中原题。"], costs: ["本末倒置，花在找资料上的时间远大于看书的时间。", "完全失去复习的主动权，命运全交给了“押题班”。", "一旦押题翻车，考场上直接双手离开键盘。"], scene: "半夜两点在知网疯狂下载目标院校系主任近三年的所有论文，企图从字里行间提炼出今年初试的最后一道论述大题。", pain: "“你把导师的论文都看遍了，但那道最基础的简答题你空着了。”", advice: ["押题永远只是锦上添花，全面覆盖才是护城河。", "把注意力从外部的“内幕消息”收回到你自己桌子上的教材。", "扎扎实实背熟基础知识才是最大的玄学。"] },
+      CHFP: { nameCn: "后现代拼贴艺术家", codeZh: "概念-诠释-自由-功利", en: "Conceptual Hermeneutic Free Pragmatism", camp: "玄学突击手", tagline: "满嘴黑话的后现代文豪", portrait: "热衷于宏大概念与发散诠释，行事散漫却又渴望高分。你的脑子里装满了各种时髦、艰涩的哲学词汇。答题时你不管三七二十一，把各种高大上的概念疯狂揉杂，试图通过一套“黑话”震慑阅卷人。", talents: ["词汇量极其丰富，答卷看起来极具视觉冲击力。", "非常擅长把简单的问题复杂化，显得很有深度。", "思维极其跳跃，总能找到奇诡的切入点。"], costs: ["常常答非所问，阅卷人看完一头雾水。", "滥用概念，经常把两个互相排斥的理论缝合在一起。", "极易激怒那些崇尚清晰表达的分析派阅卷老师。"], scene: "在试卷上挥斥方遒，把“解构”、“延异”、“权力意志”像撒胡椒面一样撒进一道关于唯物史观的基础论述题里。", pain: "“别用黑话掩饰你对基础概念的一无所知。”", advice: ["哲学不是说脱口秀，停止你的词汇堆砌。", "练习用最普通、最没有哲学色彩的日常语言向别人解释清楚一个哲学概念。", "什么时候能做到，什么时候再上考场。"] },
+      TAFI: { nameCn: "游荡的苏格拉底", codeZh: "文本-分析-自由-理想", en: "Textual Analytic Free Idealism", camp: "精神内耗者", tagline: "反复仰望星空的迷途者", portrait: "困于文本的细节与理性的追问，天性自由却又怀揣对真理的渴望。你把考研变成了一场存在主义危机，每天都在拷问自己考研的意义，以至于迟迟无法进入真正枯燥的备考状态。", talents: ["对哲学有着发自内心的敬畏和真诚。", "具备反思精神，不会沦为盲目的做题机器。", "一旦跨过心理障碍，能爆发出惊人的内驱力。"], costs: ["内耗极其严重，情绪经常处于崩溃边缘。", "用“思考意义”来逃避眼前必须完成的背诵任务。", "极易在考前因为“觉得这一切太荒谬”而放弃弃考。"], scene: "坐在自习室里，盯着书本发呆半小时，然后在日记本上写下：“这种机械的应试真的能选拔出爱智慧的人吗？我到底在干什么？”", pain: "“你总在思考考研的意义，其实只是在掩饰你背不下来的焦虑。”", advice: ["接受现实的荒诞。", "把考研当成进入学术殿堂必须支付的一张门票，或者一次磨炼心智的世俗试炼。", "先咬牙拿到入场券，再去谈论你的形而上学。"] },
+      CAFI: { nameCn: "浪漫主义碎片", codeZh: "概念-分析-自由-理想", en: "Conceptual Analytic Free Idealism", camp: "精神内耗者", tagline: "才华横溢的碎片收集狂", portrait: "沉醉于概念的游乐场，思维跳跃且无拘无束，为纯粹的好奇心而学。你今天看古希腊，明天迷上现象学，你的知识面极广，但全是散落的珍珠，没有一根应试的线把它们串起来。", talents: ["知识储备极其丰富，往往能旁征博引。", "学习过程充满乐趣，经常体验到智力上的高潮。", "对哲学的热爱极具感染力，面试时非常耀眼。"], costs: ["没有体系，答题时经常东一榔头西一棒槌。", "极度缺乏应试技巧，重点和非重点一视同仁。", "一旦遇到限制性的框架题目，才华完全施展不出。"], scene: "你的收藏夹里存了几百个G的名校公开课和哲学讲座，书架上摆满了各种流派的代表作，但那本最核心的考研指定教材却只翻到了第二章。", pain: "“你知道的哲学家比阅卷老师都多，但这道题满分10分你只能拿2分。”", advice: ["你急需引入外部强制力。", "找一个刻板、严厉的研友（最好是决定派），或者报一个带强制督学的班。", "你的才华需要一个坚硬的容器来收敛。"] },
+      THFI: { nameCn: "现象学漫步者", codeZh: "文本-诠释-自由-理想", en: "Textual Hermeneutic Free Idealism", camp: "精神内耗者", tagline: "被教材感动哭的浪漫散步者", portrait: "敏感于文本的温度，习惯于漫无边界的延展诠释，随性而纯粹。你是真正的浪漫主义者，享受阅读先哲的每一个瞬间，备考对你来说不是折磨，而是一场精神的漫游，但你完全没有时间观念。", talents: ["共情能力极强，能深刻体认哲学家的生命体验。", "心态平和，极少出现考前焦虑导致的生理失调。", "对人文社科有着浑然天成的通透感。"], costs: ["复习进度一塌糊涂，随波逐流。", "极度感性，今天状态好学十个小时，明天状态差直接消失。", "往往在11月份才突然惊醒，发现时间根本来不及了。"], scene: "秋天午后的校园长椅上，你读到马克思关于“人的异化”的论述，感动得热泪盈眶，并在朋友圈发了一段长文，然后合上书去喝咖啡了。", pain: "“你的精神世界很富足，但现实的初试日期不会为你停留。”", advice: ["请立刻去买一个巨大的倒计时日历挂在床头！", "你的感性需要理性的铁腕来平衡。", "强迫自己每天必须完成定量的枯燥任务，哪怕你今天毫无“灵感”。"] },
+      CHFI: { nameCn: "存在主义浪子", codeZh: "概念-诠释-自由-理想", en: "Conceptual Hermeneutic Free Idealism", camp: "精神内耗者", tagline: "在虚无与上岸间反复横跳的浪子", portrait: "习惯于宏观建构与自由发散，行为极其随性且深受理想主义折磨。你是情绪的奴隶，状态好时觉得状元非自己莫属，状态差时觉得人类终将毁灭考研毫无意义。你的备考史就是一部微缩的心理干预史。", talents: ["直觉极度敏锐，经常能一语道破复杂的哲学难题。", "具有极强的颠覆性和原创力，讨厌人云亦云。", "在极度亢奋的状态下，学习效率是常人的五倍。"], costs: ["极其不稳定，三天打鱼两个月晒网。", "很容易陷入抑郁或狂躁的极端情绪中无法自拔。", "往往因为一次模拟考的失利就全盘推翻自己的复习计划。"], scene: "深夜在日记里写下“我是个废物，我考不上了”，第二天清晨又像打了鸡血一样制定了一份每天学习16个小时的宏伟计划，第三天计划宣告破产。", pain: "“打败你的从来不是康德和黑格尔，是你那脆弱且多变的情绪。”", advice: ["彻底切断“情绪”与“行动”的绑定！", "不要等“状态好”了再去学习。", "把背书当成吃饭喝水一样的肌肉记忆，当虚无感袭来时，机械的重复背诵就是你最好的避难所。"] }
+    };
+
+    const typeOrder = Object.keys(profiles);
+    const flashPool = typeOrder.map((k) => `${k}｜${profiles[k].tagline}`);
+
+    const state = {
+      idx: 0,
+      answers: Array(32).fill(null),
+      loadingTimer: null,
+      flashTimer: null,
+      flashCount: 0,
+      currentType: null,
+      scores: null
+    };
+
+    const screens = {
+      landing: document.getElementById("landingScreen"),
+      test: document.getElementById("testScreen"),
+      loading: document.getElementById("loadingScreen"),
+      result: document.getElementById("resultScreen")
+    };
+
+    function showScreen(key) {
+      Object.values(screens).forEach((el) => el.classList.remove("active"));
+      screens[key].classList.add("active");
+    }
+
+    function moonLabelByProgress(progress) {
+      if (progress < 0.2) return "新月";
+      if (progress < 0.45) return "上弦";
+      if (progress < 0.75) return "盈月";
+      if (progress < 0.99) return "满月前夜";
+      return "满月";
+    }
+
+    function renderQuestion() {
+      const q = questions[state.idx];
+      document.getElementById("qTag").textContent = `${q.dim} · Q${q.id}`;
+      document.getElementById("questionText").textContent = q.text;
+      document.getElementById("progressText").textContent = `${state.idx + 1} / 32`;
+      const progress = (state.idx + 1) / 32;
+      document.getElementById("progressFill").style.width = `${progress * 100}%`;
+      document.getElementById("moon").style.setProperty("--moon", (0.08 + progress * 0.92).toFixed(3));
+      document.getElementById("moonText").textContent = moonLabelByProgress(progress);
+      document.getElementById("testError").textContent = "";
+
+      const wrap = document.getElementById("bubbleRow");
+      wrap.innerHTML = "";
+      for (let i = 1; i <= 5; i += 1) {
+        const item = document.createElement("div");
+        item.className = "bubble-item";
+        const btn = document.createElement("button");
+        btn.className = "bubble-btn";
+        btn.type = "button";
+        btn.title = likertLabels[i - 1];
+        btn.setAttribute("aria-label", likertLabels[i - 1]);
+        if (state.answers[state.idx] === i) btn.classList.add("active");
+        btn.addEventListener("click", () => selectAnswer(i, btn));
+        const label = document.createElement("div");
+        label.className = "bubble-label";
+        label.textContent = likertLabels[i - 1];
+        item.appendChild(btn);
+        item.appendChild(label);
+        wrap.appendChild(item);
+      }
+    }
+
+    function selectAnswer(value, buttonEl) {
+      state.answers[state.idx] = value;
+      document.querySelectorAll(".bubble-btn").forEach((b) => b.classList.remove("active"));
+      buttonEl.classList.add("active");
+      setTimeout(() => {
+        if (state.idx < 31) {
+          state.idx += 1;
+          renderQuestion();
+        } else {
+          startLoadingAndCompute();
+        }
+      }, 1000);
+    }
+
+    function goNext() {
+      if (state.answers[state.idx] == null) {
+        document.getElementById("testError").textContent = "请先完成当前题目选择。";
+        return;
+      }
+      if (state.idx < 31) {
+        state.idx += 1;
+        renderQuestion();
+      } else {
+        startLoadingAndCompute();
+      }
+    }
+
+    function goPrev() {
+      if (state.idx > 0) {
+        state.idx -= 1;
+        renderQuestion();
+      }
+    }
+
+    function computeScores() {
+      const a = state.answers;
+      const score1 = (a[1] + a[3] + a[5] + a[7]) - (a[0] + a[2] + a[4] + a[6]); // C - T
+      const score2 = (a[9] + a[11] + a[13] + a[15]) - (a[8] + a[10] + a[12] + a[14]); // H - A
+      const score3 = (a[17] + a[19] + a[21] + a[23]) - (a[16] + a[18] + a[20] + a[22]); // F - D
+      const score4 = (a[25] + a[27] + a[29] + a[31]) - (a[24] + a[26] + a[28] + a[30]); // I - P
+      const type = `${score1 > 0 ? "C" : "T"}${score2 > 0 ? "H" : "A"}${score3 > 0 ? "F" : "D"}${score4 > 0 ? "I" : "P"}`;
+      return { score1, score2, score3, score4, type };
+    }
+
+    function startLoadingAndCompute() {
+      showScreen("loading");
+      state.scores = computeScores();
+      state.currentType = state.scores.type;
+
+      const flashLine = document.getElementById("flashLine");
+      state.flashCount = 0;
+      clearInterval(state.flashTimer);
+      state.flashTimer = setInterval(() => {
+        const pick = flashPool[Math.floor(Math.random() * flashPool.length)];
+        flashLine.style.opacity = "0.15";
+        setTimeout(() => {
+          flashLine.textContent = pick;
+          flashLine.style.opacity = "1";
+        }, 130);
+        state.flashCount += 1;
+        if (state.flashCount >= 11) {
+          clearInterval(state.flashTimer);
+        }
+      }, 180);
+
+      clearTimeout(state.loadingTimer);
+      state.loadingTimer = setTimeout(() => {
+        renderResult(state.currentType, state.scores);
+        showScreen("result");
+      }, 2600);
+    }
+
+    function campColor(camp) {
+      if (camp === "上岸机器") return "#9f8451";
+      if (camp === "学术苦行僧") return "#6f86a8";
+      if (camp === "玄学突击手") return "#8e6a6a";
+      return "#7b6f93";
+    }
+
+    function avatarSVG(type, camp) {
+      const color = campColor(camp);
+      const accent = "#f1ebdd";
+      const eye = type.includes("A") ? "2.2" : "1.6";
+      const mouth = type.includes("H") ? "M66 120 Q90 133 114 120" : "M70 123 L110 123";
+      return `
+        <svg class="avatar-svg" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="type avatar">
+          <defs>
+            <linearGradient id="g1" x1="0" x2="1">
+              <stop offset="0%" stop-color="${color}" />
+              <stop offset="100%" stop-color="#3b465a" />
+            </linearGradient>
+          </defs>
+          <circle cx="90" cy="90" r="82" fill="url(#g1)" opacity="0.28"/>
+          <circle cx="90" cy="88" r="46" fill="${accent}" opacity="0.92"/>
+          <circle cx="74" cy="84" r="${eye}" fill="#1a1a1a"/>
+          <circle cx="106" cy="84" r="${eye}" fill="#1a1a1a"/>
+          <path d="${mouth}" stroke="#1a1a1a" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+          <path d="M45 55 Q90 12 135 55" stroke="${color}" stroke-width="6" fill="none" opacity="0.85"/>
+          <text x="90" y="162" text-anchor="middle" font-size="16" fill="${accent}" font-family="Source Han Serif SC, serif">${type}</text>
+        </svg>
+      `;
+    }
+
+    function drawRadar(scores) {
+      const c = document.getElementById("radarCanvas");
+      const ctx = c.getContext("2d");
+      const w = c.width;
+      const h = c.height;
+      ctx.clearRect(0, 0, w, h);
+
+      const cx = w / 2;
+      const cy = h / 2 + 4;
+      const r = 74;
+      const labels = ["T/C", "A/H", "D/F", "P/I"];
+      const vals = [scores.score1, scores.score2, scores.score3, scores.score4].map((v) => Math.min(1, Math.abs(v) / 16));
+
+      ctx.strokeStyle = "rgba(197,171,117,0.32)";
+      ctx.fillStyle = "rgba(197,171,117,0.08)";
+      for (let layer = 1; layer <= 4; layer += 1) {
+        const rr = (r * layer) / 4;
+        ctx.beginPath();
+        for (let i = 0; i < 4; i += 1) {
+          const a = (-Math.PI / 2) + (i * Math.PI / 2);
+          const x = cx + rr * Math.cos(a);
+          const y = cy + rr * Math.sin(a);
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = "rgba(159,132,81,0.34)";
+      ctx.strokeStyle = "rgba(197,171,117,0.85)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (let i = 0; i < 4; i += 1) {
+        const a = (-Math.PI / 2) + (i * Math.PI / 2);
+        const rr = r * vals[i];
+        const x = cx + rr * Math.cos(a);
+        const y = cy + rr * Math.sin(a);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(241,235,221,0.86)";
+      ctx.font = "12px 'Source Han Sans SC', sans-serif";
+      for (let i = 0; i < 4; i += 1) {
+        const a = (-Math.PI / 2) + (i * Math.PI / 2);
+        const x = cx + (r + 18) * Math.cos(a);
+        const y = cy + (r + 18) * Math.sin(a);
+        const tw = ctx.measureText(labels[i]).width;
+        ctx.fillText(labels[i], x - tw / 2, y + 4);
+      }
+    }
+
+    function renderAllTypeGrid(currentType) {
+      const box = document.getElementById("allTypeGrid");
+      box.innerHTML = typeOrder.map((t) => {
+        const cls = t === currentType ? "type-pill current" : "type-pill";
+        return `<div class="${cls}">${t} · ${profiles[t].nameCn}</div>`;
+      }).join("");
+    }
+
+    function renderResult(type, scores) {
+      const p = profiles[type];
+      document.getElementById("typeCode").textContent = p.nameCn;
+      document.getElementById("typeName").textContent = `${type}｜${p.codeZh}`;
+      document.getElementById("typeEnFull").textContent = p.en;
+      document.getElementById("campChip").textContent = `阵营：${p.camp}`;
+      document.getElementById("typeTagline").textContent = p.tagline;
+      document.getElementById("portrait").textContent = p.portrait;
+      document.getElementById("scene").textContent = p.scene;
+      document.getElementById("pain").textContent = p.pain;
+      document.getElementById("talents").innerHTML = p.talents.map((x) => `<li>${x}</li>`).join("");
+      document.getElementById("costs").innerHTML = p.costs.map((x) => `<li>${x}</li>`).join("");
+      document.getElementById("advice").innerHTML = p.advice.map((x) => `<li>${x}</li>`).join("");
+      document.getElementById("avatarStage").innerHTML = avatarSVG(type, p.camp);
+      drawRadar(scores);
+      renderAllTypeGrid(type);
+    }
+
+    function restart() {
+      state.idx = 0;
+      state.answers = Array(32).fill(null);
+      state.currentType = null;
+      state.scores = null;
+      renderQuestion();
+      showScreen("landing");
+    }
+
+    function downloadPoster(mode) {
+      if (!state.currentType || !state.scores) return;
+      const p = profiles[state.currentType];
+      const canvas = document.createElement("canvas");
+      if (mode === "xhs") {
+        canvas.width = 1242;
+        canvas.height = 1660;
+      } else {
+        canvas.width = 1080;
+        canvas.height = 1920;
+      }
+      const ctx = canvas.getContext("2d");
+
+      ctx.fillStyle = "#0b0b0d";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      const g = ctx.createRadialGradient(840, 250, 120, 840, 250, 700);
+      g.addColorStop(0, "rgba(159,132,81,0.20)");
+      g.addColorStop(1, "rgba(11,11,13,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "#c5ab75";
+      ctx.font = "700 62px 'Source Han Serif SC', serif";
+      ctx.fillText(`${state.currentType}｜${p.nameCn}`, 70, 120);
+      ctx.fillStyle = "#f1ebdd";
+      ctx.font = "28px 'Source Han Sans SC', sans-serif";
+      ctx.fillText(p.en, 70, 166);
+      ctx.fillStyle = "#d7d0c2";
+      ctx.fillText(p.tagline, 70, 208);
+
+      ctx.strokeStyle = "rgba(197,171,117,0.42)";
+      ctx.strokeRect(70, 250, 420, 420);
+      ctx.fillStyle = "rgba(255,255,255,0.02)";
+      ctx.fillRect(70, 250, 420, 420);
+      ctx.fillStyle = "#f1ebdd";
+      ctx.font = "42px 'Source Han Serif SC', serif";
+      ctx.fillText(state.currentType, 238, 620);
+      ctx.beginPath();
+      ctx.arc(280, 430, 110, 0, Math.PI * 2);
+      ctx.fillStyle = "#f1ebdd";
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(245, 408, 6, 0, Math.PI * 2);
+      ctx.arc(315, 408, 6, 0, Math.PI * 2);
+      ctx.fillStyle = "#111";
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(245, 468);
+      ctx.quadraticCurveTo(280, 492, 315, 468);
+      ctx.strokeStyle = "#111";
+      ctx.lineWidth = 5;
+      ctx.stroke();
+
+      const cx = 760;
+      const cy = 460;
+      const r = 180;
+      const vals = [state.scores.score1, state.scores.score2, state.scores.score3, state.scores.score4].map((v) => Math.min(1, Math.abs(v) / 16));
+      ctx.strokeStyle = "rgba(197,171,117,0.36)";
+      ctx.lineWidth = 2;
+      for (let layer = 1; layer <= 4; layer += 1) {
+        const rr = (r * layer) / 4;
+        ctx.beginPath();
+        for (let i = 0; i < 4; i += 1) {
+          const a = (-Math.PI / 2) + (i * Math.PI / 2);
+          const x = cx + rr * Math.cos(a);
+          const y = cy + rr * Math.sin(a);
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.stroke();
+      }
+      ctx.beginPath();
+      for (let i = 0; i < 4; i += 1) {
+        const a = (-Math.PI / 2) + (i * Math.PI / 2);
+        const rr = r * vals[i];
+        const x = cx + rr * Math.cos(a);
+        const y = cy + rr * Math.sin(a);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.fillStyle = "rgba(159,132,81,0.35)";
+      ctx.fill();
+      ctx.strokeStyle = "#c5ab75";
+      ctx.lineWidth = 4;
+      ctx.stroke();
+
+      const labels = ["T/C", "A/H", "D/F", "P/I"];
+      ctx.fillStyle = "#f1ebdd";
+      ctx.font = "28px 'Source Han Sans SC', sans-serif";
+      for (let i = 0; i < 4; i += 1) {
+        const a = (-Math.PI / 2) + (i * Math.PI / 2);
+        const x = cx + (r + 38) * Math.cos(a);
+        const y = cy + (r + 38) * Math.sin(a);
+        const tw = ctx.measureText(labels[i]).width;
+        ctx.fillText(labels[i], x - tw / 2, y + 10);
+      }
+
+      const blockX = 70;
+      let y = 760;
+      function title(t) {
+        ctx.fillStyle = "#c5ab75";
+        ctx.font = "700 36px 'Source Han Serif SC', serif";
+        ctx.fillText(t, blockX, y);
+        y += 48;
+      }
+      function lines(arr) {
+        ctx.fillStyle = "#f1ebdd";
+        ctx.font = "26px 'Source Han Sans SC', sans-serif";
+        arr.forEach((line) => {
+          ctx.fillText(`• ${line}`, blockX + 4, y);
+          y += 40;
+        });
+        y += 10;
+      }
+
+      title("你是这样的考研人");
+      const portraitLines = [p.portrait.slice(0, 24), p.portrait.slice(24, 48), p.portrait.slice(48, 72)];
+      lines(portraitLines.filter(Boolean));
+
+      title("你的考研天赋");
+      lines(p.talents);
+      title("你的隐秘代价");
+      lines(p.costs);
+      title("备考建议");
+      lines(p.advice);
+
+      ctx.fillStyle = "#d7d0c2";
+      ctx.font = "28px 'Source Han Sans SC', sans-serif";
+      ctx.fillText(`刺痛句：${p.pain}`, 70, 1760);
+      ctx.fillStyle = "#c5ab75";
+      ctx.font = "700 32px 'Source Han Serif SC', serif";
+      ctx.fillText("关注公众号：思庐哲学考研", 70, 1840);
+      ctx.fillStyle = "#f1ebdd";
+      ctx.font = "30px 'Source Han Sans SC', sans-serif";
+      ctx.fillText("领取上岸资料【一本通】", 70, 1884);
+
+      if (mode === "xhs") {
+        ctx.fillStyle = "#d7d0c2";
+        ctx.font = "22px 'Source Han Sans SC', sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("公o众o H：思庐哲学考研，回「PETI」测试", canvas.width / 2, canvas.height - 26);
+        ctx.textAlign = "start";
+      }
+
+      const a = document.createElement("a");
+      a.href = canvas.toDataURL("image/png");
+      a.download = `PETI-${state.currentType}-${mode === "xhs" ? "xhs" : "wx"}.png`;
+      a.click();
+    }
+
+    document.getElementById("startBtn").addEventListener("click", () => {
+      showScreen("test");
+      renderQuestion();
+    });
+    document.getElementById("prevBtn").addEventListener("click", goPrev);
+    document.getElementById("nextBtn").addEventListener("click", goNext);
+    document.getElementById("restartBtn").addEventListener("click", restart);
+    document.getElementById("downloadWxPosterBtn").addEventListener("click", () => downloadPoster("wx"));
+    document.getElementById("downloadXhsPosterBtn").addEventListener("click", () => downloadPoster("xhs"));
+  </script>
+</body>
+</html>
